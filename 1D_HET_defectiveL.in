@@ -1,0 +1,917 @@
+# 1D Heterojunctions SC
+# version 1 [22/01/2014 - 24/02/14]
+# periodic/without periodicity full/part cell
+
+#go atlas simflags="-P 5"
+#go atlas simflags="-P 4"
+#go atlas
+
+set nm = 1e-3
+set pi = 3.1415
+
+#set DIR = "/home/korovin_ale/silvaco_works/"
+set DIR = ""
+
+
+## Sweep type (SweepType):
+# 1. Type A
+# 2. Type B
+# 3. Type C (BSFType-het, emitterType-homo)
+# 4. Type D (BSFType-homo, emitterType-het)
+# 5. Hybrid B (BSFType-homo+het, emitterType-homo+het)
+# 6. Hybrid C (BSFType-homo+het, emitterType-het)
+# 7. Hybrid D (BSFType-het, emitterType-homo+het)
+# ...
+set SweepType = 1
+#
+set SweepType = 2
+#
+set SweepType = 5
+#set SweepType = 4
+
+#
+set IsStructureShow = 0
+#
+set IsStructureShow = 1
+
+## Defect pool model
+#
+set isDefectPool = 0
+#set isDefectPool = 1
+
+# Change position of emitter and BSF (isPNN = 1 => emitter is located at front interface)
+set isPNN = 0
+set isPNN = 1
+
+## Calculations using external data for ion implantation
+# Gaussian distribution
+set isExtProfileBSF = 0
+#set isExtProfileBSF = 1
+set isExtProfileEmitter = 0
+#set isExtProfileEmitter = 1
+## from external data
+set n_type_doping = "$'DIR'P_n.doping"
+set p_type_doping = "$'DIR'B_p.doping"
+
+## penetration depths (regions three times more) 
+IF COND=($isExtProfileBSF = 1)
+	set BSF_cSi_penetration_depth	    = 0.01
+ELSE
+	set BSF_cSi_penetration_depth	    = 0.01
+IF.END
+#set BSF_cSi_penetration_ratio_lateral = 0.25
+set BSF_cSi_penetration_ratio_lateral = 0
+IF COND=($isExtProfileEmitter = 1)
+	set emitter_cSi_penetration_depth	= 0.01
+ELSE
+	set emitter_cSi_penetration_depth	= 0.01
+IF.END
+#set emitter_cSi_penetration_ratio_lateral = 0.25
+set emitter_cSi_penetration_ratio_lateral = 0
+
+## contact resistance (distributed?) ohm*cm^2=ohm*um^2*1e8
+#BSF
+set ncontact = 0
+#set ncontact = 1e-5*1e8
+#emitter
+set pcontact = 0
+#set pcontact = 1.5e-5*1e8
+
+## tunnel contacts
+set BSFSiO2_thick			= 0
+#set BSFSiO2_thick			= 10*nm
+set emitterSiO2_thick			= 0
+#set emitterSiO2_thick			= 10*nm
+
+## Interface Defects
+set wdef = 0.15
+set wdef = $wdef*sqrt(2)
+set isInterfaceDefect = 0
+#
+set isInterfaceDefect = 1
+
+set DefectiveLayerThickness = 0*$nm
+#
+set DefectiveLayerThickness = 1*$nm
+set isBSFdef = 0
+#
+set isBSFdef = 1
+#set Ndefsurf_BSF = 4e10
+#set SigmaDef_BSF = 1e-17
+set Ndefsurf_BSF = 1e11
+set SigmaDef_BSF = 1e-16
+
+set isemitterdef = 0
+#
+set isemitterdef = 1
+set Ndefsurf_emitter = 1e11
+set SigmaDef_emitter = 1e-16
+
+set wdef = 0.15
+set wdef = $wdef*sqrt(2)
+
+## Switches
+set isAntiRefl = 0
+#
+set isAntiRefl = 1
+set isExternGR = 0
+#set isExternGR = 1
+# photogeneration increasing factor
+set gammaGR = 1
+#
+set gammaGR = 1.133
+#set gammaGR = 1.158
+
+#
+set cSi_thick			= 100
+#set cSi_thick			= 300
+#
+set cellwidth			= 600
+set cellwidth			= 1
+set cellwidth_ill		= $cellwidth
+
+
+
+## isBSFhomo = 1
+#set cSiN_conc			= 1e18
+#set cSiN_conc			= 2.15443e18
+#set cSiN_conc			= 4.64159e18
+#set cSiN_conc			= 1e19
+#set cSiN_conc			= 2.15443e19
+#set cSiN_conc			= 4.64159e19
+#set cSiN_conc			= 1e20
+#set cSiN_conc			= 2.15443e20
+#set cSiN_conc			= 4.64159e20
+#
+set cSiN_conc			= 1e21
+
+## isemitterhomo = 1
+#set cSiP_conc			= 1e18
+#set cSiP_conc			= 2.15443e18
+#set cSiP_conc			= 4.64159e18
+#set cSiP_conc			= 1e19
+#set cSiP_conc			= 2.15443e19
+#set cSiP_conc			= 4.64159e19
+#set cSiP_conc			= 1e20
+#set cSiP_conc			= 2.15443e20
+#set cSiP_conc			= 4.64159e20
+#
+set cSiP_conc			= 1e21
+
+## in cSi (wafer)
+## wafer doping
+#set cSiN_conc_wafer	= 2e15
+#set cSiN_conc_wafer		= 9.17e14
+set cSiN_conc_wafer		= 1e15
+set lifetime			= 30e-3
+#set lifetime			= 10e-3
+#set lifetime			= 5e-3
+#set lifetime			= 1e-3
+# recombination velocity at interface semiconductor/oxide(domain)
+#set Sn_semoxide					= 10
+set Sn_semoxide					= 7
+#set Sp_semoxide					= 10
+set Sp_semoxide					= 7
+# recombination velocity at interface semiconductor/semiconductor (crystalline/amorphous)
+set Sn_semsem					= 0
+set Sp_semsem					= 0
+#set Sn_semsem					= 7
+#set Sp_semsem					= 7
+	
+#
+set aSi_mat				= "poly"
+#set aSi_mat				= "Polysilicon"
+#set aSi_mat				= "Silicon"
+set cSi_mat				= "Si"
+#
+set cSi_mat				= "Silicon"
+
+
+## amorphous silicon
+## Front surface field and passivation
+set aSi_thick_E		= 0*$nm
+#
+set aSi_thick_E		= 10*$nm
+set aSi_thick_BSF	= 10*$nm
+set i_aSi_thick_E	= 0*$nm
+set i_aSi_thick_BSF	= 0*$nm
+
+## old from Marie
+# (p) a-Si:H
+set aSiP_concE			= 2.996e19
+set NTAp = 1e22
+set NTDp = $NTAp
+set WTAp = 0.03
+set WTDp = 0.08
+set NGAp = 1.76e19
+set NGDp = $NGAp
+set EGAp = 1.7-1.3
+set EGDp = 1.1
+set WGAp = 0.24
+set WGDp = $WGAp
+
+# (n) a-Si:H
+set aSiN_concBSF			= 9.17e18
+set NTAn = 1e22
+set NTDn = $NTAn
+set WTAn = 0.03
+set WTDn = 0.05
+set NGAn = 1.76e19
+set NGDn = $NGAn
+set EGAn = 1.7-0.7
+set EGDn = 0.5
+set WGAn = 0.24
+set WGDn = $WGAn
+
+# (i) a-Si:H ???
+set aSiNi_concBSF		= 0
+set aSiPi_concBSF		= 0
+set NTAin = 1e22
+set NTDin = $NTAin
+set WTAin = 0.03
+set WTDin = 0.05
+set NGAin = 1.76e19
+set NGDin = $NGAin
+set EGAin = 1.7-1.09
+set EGDin = 0.855
+set WGAin = 0.563
+set WGDin = $WGAin
+
+set aSiNi_concE	= 0
+set aSiPi_concE	= 0
+set NTAip = 1e22
+set NTDip = $NTAip
+set WTAip = 0.03
+set WTDip = 0.05
+set NGAip = 1.76e19
+set NGDip = $NGAip
+set EGAip = 1.7-1.09
+set EGDip = 0.855
+set WGAip = 0.563
+set WGDip = $WGAip
+	
+## calculated using the defect pool model
+# (p) a-Si:H Ef-Ev=0.299932eV 
+set aSiP_concE			= 2.712e19
+set NTAp = 2e21
+set NTDp = $NTAp
+set WTAp = 0.04
+set WTDp = 0.085
+set NGAp = 4.515e19
+set NGDp = $NGAp
+set EGAp = 0.212
+set EGDp = 1.252
+set WGAp = 0.269
+set WGDp = $WGAp
+
+# (n) a-Si:H Ef-Ec=0.199914eV
+set aSiN_concBSF			= 1.56e+18
+set NTAn = 2e21
+set NTDn = $NTAn
+set WTAn = 0.04
+set WTDn = 0.065
+set NGAn = 7.712e17
+set NGDn = $NGAn
+set EGAn = 0.767
+set EGDn = 0.697
+set WGAn = 0.269
+set WGDn = $WGAn
+
+# (i) a-Si:H
+#set aSiNi_conc			= 0
+#set NTAi = 2e21
+#set NTDi = $NTAi
+#set WTAi = 0.04
+#set WTDi = 0.045
+#set NGAi = 3.198e15
+#set NGDi = $NGAi
+#set EGAi = 1.7-1.09
+#set EGDi = 0.855
+#set WGAi = 0.563
+#set WGDi = $WGAi
+set aSiNi_concBSF		= 1e15
+set aSiPi_concBSF		= 0
+set NTAin = 2e21
+set NTDin = $NTAin
+set WTAin = 0.04
+set WTDin = 0.045
+set NGAin = 1.052e17
+set NGDin = $NGAin
+set EGAin = 0.96
+set EGDin = 0.855
+set WGAin = 0.504
+set WGDin = $WGAin
+
+set aSiNi_concE	= 1e15
+set aSiPi_concE	= 0
+set NTAip = 2e21
+set NTDip = $NTAip
+set WTAip = 0.04
+set WTDip = 0.045
+set NGAip = 1.052e17
+set NGDip = $NGAip
+set EGAip = 0.96
+set EGDip = 0.855
+set WGAip = 0.504
+set WGDip = $WGAip
+
+IF COND=($SweepType=1)
+	set isBSFhomo			= 1
+	set isBSFHET			= 0
+	set isemitterhomo		= 1
+	set isemitterHET		= 0
+	set aSi_thick_E			= 0
+	set aSi_thick_BSF		= 0
+	set i_aSi_thick_E		= 0
+	set i_aSi_thick_BSF		= 0
+IF.END
+IF COND=($SweepType=2)
+	set isBSFhomo			= 0
+	set isBSFHET			= 1
+	set isemitterhomo		= 0
+	set isemitterHET		= 1
+IF.END
+IF COND=($SweepType=3)
+	set isBSFhomo			= 0
+	set isBSFHET			= 1
+	set isemitterhomo		= 1
+	set isemitterHET		= 0
+	set aSi_thick_E			= 0
+	set i_aSi_thick_E		= 0
+IF.END
+IF COND=($SweepType=4)
+	set isBSFhomo			= 1
+	set isBSFHET			= 0
+	set isemitterhomo		= 0
+	set isemitterHET		= 1
+	set aSi_thick_BSF		= 0
+	set i_aSi_thick_BSF		= 0
+IF.END
+IF COND=($SweepType=5)
+	set isBSFhomo			= 1
+	set isBSFHET			= 1
+	set isemitterhomo		= 1
+	set isemitterHET		= 1
+IF.END
+IF COND=($SweepType=6)
+	set isBSFhomo			= 1
+	set isBSFHET			= 1
+	set isemitterhomo		= 1
+	set isemitterHET		= 0
+IF.END
+IF COND=($SweepType=7)
+	set isBSFhomo			= 0
+	set isBSFHET			= 1
+	set isemitterhomo		= 1
+	set isemitterHET		= 1
+IF.END
+
+
+#set MeshScaling		= 2
+#set MeshScaling		= 1.5
+#set MeshScaling		= 1.05
+#
+set MeshScaling		= 1
+
+
+## mesh definition (spacing) at interface
+set interface_thick		= 1*$nm
+
+
+# region coordinates
+## y mesh
+IF COND=($isPNN=1)
+	set y1SiO2 		= $emitterSiO2_thick
+	set aSi_thick_front = $aSi_thick_E
+	set aSi_thick_rear  = $aSi_thick_BSF
+	set i_aSi_thick_front = $i_aSi_thick_E
+	set i_aSi_thick_rear  = $i_aSi_thick_BSF
+ELSE
+	set y1SiO2 		= $BSFSiO2_thick
+	set aSi_thick_front = $aSi_thick_BSF
+	set aSi_thick_rear  = $aSi_thick_E
+	set i_aSi_thick_front = $i_aSi_thick_BSF
+	set i_aSi_thick_rear  = $i_aSi_thick_E
+IF.END
+set y1  = $y1SiO2+$aSi_thick_front
+set y2  = $y1+$i_aSi_thick_front
+set y2d = $y2+$DefectiveLayerThicknessFront
+IF COND=($isBSFhomo = 1 & $isPNN = 0)
+	set y2h 		= $y2d+3*$BSF_cSi_penetration_depth
+IF.END
+IF COND=($isemitterhomo = 1 & $isPNN = 1)
+	set y2h 		= $y2d+3*$emitter_cSi_penetration_depth
+IF.END
+set y3  = $y2+$cSi_thick
+set y3d = $y3-$DefectiveLayerThickness
+IF COND=($isemitterhomo = 1 & $isPNN = 0)
+	set y3h 		= $y3d-3*$emitter_cSi_penetration_depth
+IF.END
+IF COND=($isBSFhomo = 1 & $isPNN = 1)
+	set y3h 		= $y3d-3*$BSF_cSi_penetration_depth
+IF.END
+set y4  = $y3+$i_aSi_thick_rear
+set y5  = $y4+$aSi_thick_rear
+IF COND=($isPNN=1)
+	set y5SiO2 		= $y5+$BSFSiO2_thick
+ELSE
+	set y5SiO2 		= $y5+$emitterSiO2_thick
+IF.END
+
+SET OutputString = "HET1Dnnp"
+IF COND=($i_aSi_thick_front>0)
+	SET OutputString = "$'OutputString'_front$'i_aSi_thick_front'"
+IF.END
+IF COND=($i_aSi_thick_rear>0)
+	SET OutputString = "$'OutputString'_rear$'i_aSi_thick_rear'"
+IF.END
+SET OutputString = "$'OutputString'_Ns$'Ndefsurf'_Ns$'SigmaDef'_defective1_$'DefectiveLayerThicknessFront'_2_$'DefectiveLayerThickness'"
+
+## -------------------------  MESH DEFINITION  -------------------------  
+MESH SPACE.MULT=$MeshScaling
+
+x.mesh LOCATION=0.0											SPACING=$cellwidth/2
+x.mesh LOCATION=$cellwidth									SPACING=$cellwidth/2
+
+# structure start
+# front interface (y=0,y1) air -- [a-Si:H(n,i)]
+y.mesh LOCATION=0							SPACING=$interface_thick/10
+y.mesh LOCATION=0+2*$interface_thick		SPACING=$interface_thick/2
+# center of layer a-Si:H(n)
+IF COND=($i_aSi_thick_front>0)
+#	y.mesh LOCATION=(0+$y1)/2					SPACING=$i_aSi_thick_front/5
+	y.mesh LOCATION=(0+$y1)/2					SPACING=0.25*$nm
+IF.END
+
+# interface (y1) a-Si:H(n) -- a-Si:H(i)
+IF COND=($i_aSi_thick_front>0)
+	y.mesh LOCATION=$y1-2*$interface_thick		SPACING=$interface_thick/2
+	y.mesh LOCATION=$y1							SPACING=$interface_thick/10
+	y.mesh LOCATION=$y1+2*$interface_thick		SPACING=$interface_thick/2
+
+#	y.mesh LOCATION=($y1+$y2)/2					SPACING=$i_aSi_thick_front/5
+	y.mesh LOCATION=($y1+$y2)/2					SPACING=0.25*$nm
+
+	y.mesh LOCATION=$y2-2*$interface_thick		SPACING=$interface_thick/2
+	y.mesh LOCATION=$y2							SPACING=$interface_thick/20
+ELSE
+	y.mesh LOCATION=$y1-2*$interface_thick		SPACING=$interface_thick/2
+	y.mesh LOCATION=$y1							SPACING=$interface_thick/20
+IF.END
+# interface (y2d) defective layer -- c-Si(n)
+IF COND=($DefectiveLayerThicknessFront>0)
+	# defective layer
+	y.mesh LOCATION=$y2							SPACING=$DefectiveLayerThicknessFront/20
+	y.mesh LOCATION=$y2d						SPACING=$DefectiveLayerThicknessFront/20
+IF.END
+y.mesh LOCATION=$y2d						SPACING=$interface_thick/20
+y.mesh LOCATION=$y2d+2*$interface_thick		SPACING=$interface_thick/2
+
+#(front homo) c-Si(p)
+IF COND=($isBSFhomo = 1 & $isPNN = 0)
+	set w_tmp=$BSF_cSi_penetration_depth
+	y.mesh LOCATION=$y2d			SPACING=$w_tmp/10
+	y.mesh LOCATION=$y2d+2*$w_tmp	SPACING=$w_tmp/10
+IF.END
+IF COND=($isemitterhomo = 1 & $isPNN = 1)
+	set w_tmp=$emitter_cSi_penetration_depth
+	y.mesh LOCATION=$y2d			SPACING=$w_tmp/10
+	y.mesh LOCATION=$y2d+2*$w_tmp	SPACING=$w_tmp/10
+IF.END
+
+# center of layer c-Si(n)
+y.mesh LOCATION=($y2+$y3)/2					SPACING=5
+
+#(rear homo) c-Si(p)
+IF COND=($isemitterhomo = 1 & $isPNN = 0)
+	set w_tmp=$emitter_cSi_penetration_depth
+	y.mesh LOCATION=$y3d-2*$w_tmp	SPACING=$w_tmp/10
+	y.mesh LOCATION=$y3d			SPACING=$w_tmp/10
+IF.END
+IF COND=($isBSFhomo = 1 & $isPNN = 1)
+	set w_tmp=$BSF_cSi_penetration_depth
+	y.mesh LOCATION=$y3d-2*$w_tmp	SPACING=$w_tmp/10
+	y.mesh LOCATION=$y3d			SPACING=$w_tmp/10
+IF.END
+
+y.mesh LOCATION=$y3d-2*$interface_thick		SPACING=$interface_thick/2
+y.mesh LOCATION=$y3d						SPACING=$interface_thick/20
+IF COND=($DefectiveLayerThickness>0)
+	# defective layer
+	y.mesh LOCATION=$y3d					SPACING=$DefectiveLayerThickness/20
+	y.mesh LOCATION=$y3						SPACING=$DefectiveLayerThickness/20
+IF.END
+
+
+# a-Si:H(i) layer
+IF COND=($i_aSi_thick_rear>0)
+	# interface (y3) c-Si -- a-Si:H(i)
+	y.mesh LOCATION=$y3							SPACING=$interface_thick/20
+	y.mesh LOCATION=$y3+2*$interface_thick		SPACING=$interface_thick/2
+
+	# center of layer a-Si:H(i)
+	y.mesh LOCATION=($y3+$y4)/2					SPACING=0.25*$nm
+
+	# interface (y4) a-Si:H(i) -- air (or a-Si:H(n,p) )
+	y.mesh LOCATION=$y4-2*$interface_thick		SPACING=$interface_thick/2
+	y.mesh LOCATION=$y4							SPACING=$interface_thick/10
+	y.mesh LOCATION=$y4+2*$interface_thick		SPACING=$interface_thick/2
+ELSE
+	# interface (y4) c-Si(n) -- a-Si:H(p,n or i)
+	y.mesh LOCATION=$y4							SPACING=$interface_thick/20
+	y.mesh LOCATION=$y4+2*$interface_thick		SPACING=$interface_thick/2
+IF.END
+
+IF COND=($aSi_thick_rear>0)
+	# center of layer a-Si:H(n,p)
+	y.mesh LOCATION=($y4+$y5)/2					SPACING=0.25*$nm
+IF.END
+
+# structure end
+# interface (y5) a-Si:H(n,p) -- air
+y.mesh LOCATION=$y5-2*$interface_thick		SPACING=$interface_thick/2
+y.mesh LOCATION=$y5							SPACING=$interface_thick/20
+
+## -------------------------  REGIONS DEFINITION  -------------------------  
+# 1 - a-Si:H
+# 2 - c-Si
+# 3 - air
+# 4 - SiO2
+
+
+# SiO2 tunnel contacts
+IF COND=($y1SiO2 ^= 0)
+	#region num=4	x.min=0	x.max=$cellwidth	y.min=0	y.max=$y1SiO2	material=SiO2
+	region num=4	x.min=0	x.max=$cellwidth	y.min=0	y.max=$y1SiO2	oxide
+IF.END
+IF COND=($y5SiO2 ^= $y5)
+	#region num=4	x.min=0	x.max=$cellwidth	y.min=$y5	y.max=$y5SiO2	material=SiO2
+	region num=4	x.min=0	x.max=$cellwidth	y.min=$y5	y.max=$y5SiO2	oxide
+IF.END
+
+## front
+# a-Si:H(n,p) + a-Si:H(i)
+IF COND=($y2 ^= 0)
+	region num=1	x.min=0	x.max=$cellwidth	y.min=0	y.max=$y2	material=$aSi_mat
+IF.END
+## rear
+# a-Si:H(n,p) + a-Si:H(i)
+IF COND=($y3 ^= $y5)
+region num=1	x.min=0	x.max=$cellwidth	y.min=$y3	y.max=$y5	material=$aSi_mat
+IF.END
+
+# c-Si(n)
+region num=2	x.min=0	x.max=$cellwidth	y.min=$y2	y.max=$y3	material=$cSi_mat
+
+## front
+
+
+
+## -------------------------  ELECTRODES DEFINITION  -------------------------  
+#electrode name=emitter top
+#electrode name=base bottom 
+##
+IF COND=($isPNN=1)
+	## emitter:
+	SET coordP1  = 0
+	SET coordP2  = $y1
+	SET coordP1i = $y1
+	SET coordP2i = $y1+$i_aSi_thick_front
+	## base:
+	SET coordN1i = $y4-$i_aSi_thick_rear
+	SET coordN2i = $y4
+	SET coordN1  = $y4
+	SET coordN2  = $y5
+
+	electrode num=1	name=base		x.min=0	x.max=$cellwidth	Y.MIN=$y5SiO2	Y.MAX=$y5SiO2+0.0
+	electrode num=2 name=emitter	x.min=0	x.max=$cellwidth	Y.MIN=0		Y.MAX=-0.0
+ELSE
+	## emitter:
+	SET coordP1i = $y4-$i_aSi_thick_rear
+	SET coordP2i = $y4
+	SET coordP1  = $y4
+	SET coordP2  = $y5
+	## base:
+	SET coordN1  = 0
+	SET coordN2  = $y1
+	SET coordN1i = $y1
+	SET coordN2i = $y1+$i_aSi_thick_front
+
+	electrode	num=1	name=base		x.min=0	x.max=$cellwidth	Y.MIN=0		Y.MAX=-0.0
+	electrode	num=2	name=emitter	x.min=0	x.max=$cellwidth	Y.MIN=$y5SiO2	Y.MAX=$y5SiO2+0.0
+IF.END
+
+## -------------------------  DOPING DEFINITION  -------------------------  
+
+## emitter
+# a-Si:H(p)
+IF COND=($isemitterHET = 1)
+	IF COND=($coordP1 ^= $coordP2)
+		doping	num=1	x.min=0	x.max=$cellwidth	y.min=$coordP1	y.max=$coordP2	uniform	p.type	conc=$aSiP_concE
+	IF.END
+	IF COND=($coordP1i ^= $coordP2i)
+		doping	num=1	x.min=0	x.max=$cellwidth	y.min=$coordP1i	y.max=$coordP2i	uniform	p.type	conc=$aSiPi_concE
+		doping	num=1	x.min=0	x.max=$cellwidth	y.min=$coordP1i	y.max=$coordP2i	uniform	n.type	conc=$aSiNi_concE
+	IF.END
+IF.END
+## base:
+# a-Si:H(n)
+IF COND=($isBSFHET = 1)
+	IF COND=($coordN1 ^= $coordN2)
+		doping	num=1	x.min=0	x.max=$cellwidth	y.min=$coordN1	y.max=$coordN2	uniform	n.type	conc=$aSiN_concBSF
+	IF.END
+	IF COND=($coordN1i ^= $coordN2i)
+		doping	num=1	x.min=0	x.max=$cellwidth	y.min=$coordN1i	y.max=$coordN2i	uniform	n.type	conc=$aSiNi_concBSF
+		doping	num=1	x.min=0	x.max=$cellwidth	y.min=$coordN1i	y.max=$coordN2i	uniform	p.type	conc=$aSiPi_concBSF
+	IF.END
+IF.END
+
+
+## bulk
+# c-Si(n)
+doping	num=2	uniform	n.type	conc=$cSiN_conc_wafer
+
+
+IF COND=($isemitterhomo = 1)
+	IF COND=($iPNN = 1)
+		DOPING number=2 p.TYPE GAUSSIAN CONCENTRATION=$cSiP_conc CHARACTERISTIC=$emitter_cSi_penetration_depth/sqrt(2) RATIO.LATERAL=0 PEAK=$y2d
+	ELSE
+		DOPING number=2 p.TYPE GAUSSIAN CONCENTRATION=$cSiP_conc CHARACTERISTIC=$emitter_cSi_penetration_depth/sqrt(2) RATIO.LATERAL=0 PEAK=$y3d
+	IF.END
+IF.END
+IF COND=($isBSFhomo = 1)
+	IF COND=($iPNN = 1)
+		DOPING number=2 n.TYPE GAUSSIAN CONCENTRATION=$cSiN_conc CHARACTERISTIC=$emitter_cSi_penetration_depth/sqrt(2) RATIO.LATERAL=0 PEAK=$y3d
+	ELSE
+		DOPING number=2 n.TYPE GAUSSIAN CONCENTRATION=$cSiN_conc CHARACTERISTIC=$emitter_cSi_penetration_depth/sqrt(2) RATIO.LATERAL=0 PEAK=$y2d
+	IF.END
+IF.END
+
+
+## -------------------------  INTERFACES DEFINITION  -------------------------  
+#interface optical p1.x=0.0 p1.y=-TCO_thick p2.x=$x4 p2.y=-TCO_thick diffusive ellipse semi=0.31 sig=20
+#interface optical ar.index=1.8 ar.thick=0.08 p1.x=0.0 p1.y=0.0 p2.x=$x4 p2.y=0.0
+# Anti-Reflection
+#
+interface optical ar.index=2.05 ar.thick=0.075 p1.x=0 p1.y=0 p2.x=$cellwidth p2.y=0
+interface S.X s.n=$Sn_semoxide s.p=$Sp_semoxide y.min=0 y.max=1
+IF COND=($Sn_semsem = 0)
+	interface S.S thermionic tunnel 
+ELSE
+	interface S.S s.n=$Sn_semsem s.p=$Sp_semsem thermionic tunnel 
+IF.END
+
+
+## -------------------------  CONTACTS DEFINITION  -------------------------  
+# ALUMINUM - ohmic contact
+#contact name=base ALUMINUM 
+#contact name=emitter ALUMINUM
+# ?for silver
+#contact name=emitter WORKFUNCTION=4.73  surf.rec
+
+
+IF COND=($ncontact = 0)
+	IF COND=($isBSFHET = 1)
+#		contact name=base surf.rec
+	#	WORKFUN=4.73
+	
+		# affinity+Ec-F = 3.87+0.2
+		contact name=base surf.rec	WORKFUN=4.07
+	ELSE
+		contact name=base  surf.rec
+	IF.END
+ELSE
+#		contact name=base surf.rec con.resistance=$ncontact
+		contact name=base surf.rec resistance=$ncontact/$w_contact_BSF
+IF.END
+
+# ?for silver
+#contact name=emitter WORKFUN=4.73  surf.rec
+
+IF COND=($pcontact = 0)
+	IF COND=($isemitterHET = 1)
+#		contact name=emitter surf.rec WORKFUN=5.3
+		# affinity+Eg-(F-Ev) = 3.87+1.7-0.3
+		#
+		contact name=emitter surf.rec WORKFUN=5.27
+	ELSE
+		contact name=emitter surf.rec 
+		#WORKFUN=5.1 
+	IF.END
+ELSE
+#		contact name=emitter surf.rec con.resistance=$pcontact
+		contact name=emitter surf.rec resistance=$pcontact/$w_contact_emitter
+IF.END
+
+## -------------------------  MATERIAL DEFINITION  -------------------------  
+material oxide mc=0.42 mv=0.16
+
+## emitter & base:
+# a-Si:H(n,p)
+material region=1 index.file="$'DIR'aSi.txt" EG300=1.7 AFFINITY=3.87 PERMITTIVITY=11.9 NC300=5e19 NV300=5e19 MUN=10 MUP=1
+#TAUN0=1 TAUP0=1 
+
+# c-Si(n)
+material region=2 index.file="$'DIR'cSi.txt" EG300=1.12 AFFINITY=4.05 PERMITTIVITY=11.9  NC300=2.8e19 NV300=1.04e19 \
+         AUGN=6.08e-30 AUGP=1.92e-30 TAUN0=$lifetime TAUP0=$lifetime
+
+## -------------------------  DEFECTS DEFINITION  -------------------------  
+IF COND=($isDefectPool=1)
+	DEFECTS number=1 AMPHOTERIC \
+		NUM.AMPHOTERIC=100 EP.AMPHOTERIC=1.27 EU.AMPHOTERIC=0.2 EV0.AMPHOTERIC=0.056 \
+		HCONC.AMPHOTERIC=5e21 NSISI.AMPHOTERIC=2e23 NV0.AMPHOTERIC=1e20 \
+		SIGMA.AMPHOTERIC=0.19 SIGN0.AMPHOTERIC=1e-16 SIGNP.AMPHOTERIC=1e-16 SIGP0.AMPHOTERIC=1e-16 SIGPN.AMPHOTERIC=1e-16 T0.AMPHOTERIC=300 \
+		FILE.AMPHOTERIC=defectpoolp FILEX.AMPHOTERIC=0 FILEY.AMPHOTERIC=$y5
+	# store data
+	# p
+#	DEFECTS number=1 FILE.AMPHOTERIC=defectpoolp FILEX.AMPHOTERIC=0 FILEY.AMPHOTERIC=0
+	# i
+#	DEFECTS number=1 FILE.AMPHOTERIC=defectpooli FILEX.AMPHOTERIC=0 FILEY.AMPHOTERIC=($y1+$y2)/2
+	# n
+#	DEFECTS number=1 FILE.AMPHOTERIC=defectpooln FILEX.AMPHOTERIC=0 FILEY.AMPHOTERIC=$y5
+
+	# p region band tails
+	DEFECTS X.MIN=0 X.MAX=$cellwidth Y.MIN=$coordP1 Y.MAX=$coordP2 NTA=1e22 NTD=1e22 WTA=0.03 WTD=0.08 \
+		NGA=0 NGD=0 \
+		SIGTAE=1e-15 SIGTAH=1e-17 SIGTDE=1e-17 SIGTDH=1e-15 \
+		SIGGAE=1e-15 SIGGAH=1e-15 SIGGDE=1e-15 SIGGDH=1e-15   \
+		continuous numa=1000 numd=1000 tfile=defectpoolTp
+	# i-front band tails
+	IF COND=($i_aSi_thick_front>0)
+		DEFECTS X.MIN=0 X.MAX=$cellwidth Y.MIN=$y1 Y.MAX=$y2  NTA=1e22 NTD=1e22 WTA=0.06 WTD=0.09 \
+			NGA=0 NGD=0 \
+			SIGTAE=1e-15 SIGTAH=1e-17 SIGTDE=1e-17 SIGTDH=1e-15 \
+			SIGGAE=1e-15 SIGGAH=1e-15 SIGGDE=1e-15 SIGGDH=1e-15   \
+			continuous numa=1000 numd=1000 tfile=defectpoolTi
+	IF.END
+	# i-rear band tails
+	IF COND=($i_aSi_thick_rear>0)
+		DEFECTS X.MIN=0 X.MAX=$cellwidth Y.MIN=$y3 Y.MAX=$y4 NTA=1e22 NTD=1e22 WTA=0.06 WTD=0.09 \
+			NGA=0 NGD=0 \
+			SIGTAE=1e-15 SIGTAH=1e-17 SIGTDE=1e-17 SIGTDH=1e-15 \
+			SIGGAE=1e-15 SIGGAH=1e-15 SIGGDE=1e-15 SIGGDH=1e-15   \
+			continuous numa=1000 numd=1000 tfile=defectpoolTirear
+	IF.END
+	# n region band tails
+	DEFECTS X.MIN=0 X.MAX=$cellwidth Y.MIN=$coordN1 Y.MAX=$coordN2 NTA=1e22 NTD=1e22 WTA=0.03 WTD=0.05 \
+		NGA=0 NGD=0 \
+		SIGTAE=1e-15 SIGTAH=1e-17 SIGTDE=1e-17 SIGTDH=1e-15 \
+		SIGGAE=1e-15 SIGGAH=1e-15 SIGGDE=1e-15 SIGGDH=1e-15   \
+		continuous numa=1000 numd=1000 tfile=defectpoolTn
+ELSE
+	## emitter:
+	# a-Si:H(p); Ef-Ev=0.299932eV  ; Na=2.712e19
+	IF COND=($isemitterHET=1)
+
+	#(homo, load defects from file)
+#	Options cint.param=def_file			cint.char=$def_1
+#	Options cint.param=def_NTA			cint.double=$NTAp
+#	Options cint.param=def_NTD			cint.double=$NTDp
+#	Options cint.param=def_WTA			cint.double=$WTAp
+#	Options cint.param=def_WTD			cint.double=$WTDp
+#	DOPING n.TYPE F.DOPING="$'DIR'doping_profile2.c"
+#	DEFECTS number=1 X.MIN=0 X.MAX=$cellwidth Y.MIN=$coordP1 Y.MAX=$coordP2 F.DEFECTS=defects.c continuous  numa=100 numd=100\
+#		SIGTAE=1e-15 SIGTAH=1e-17 SIGTDE=1e-17 SIGTDH=1e-15 \
+#		SIGGAE=1e-15 SIGGAH=1e-15 SIGGDE=1e-15 SIGGDH=1e-15
+
+		IF COND=($aSi_thick_E>0)
+			DEFECTS number=1 X.MIN=0 X.MAX=$cellwidth Y.MIN=$coordP1 Y.MAX=$coordP2 \
+				NTA=$NTAp NTD=$NTDp WTA=$WTAp WTD=$WTDp \
+				NGA=$NGAp NGD=$NGDp EGA=$EGAp EGD=$EGDp WGA=$WGAp WGD=$WGDp \
+				SIGTAE=1e-15 SIGTAH=1e-17 SIGTDE=1e-17 SIGTDH=1e-15 \
+				SIGGAE=1e-15 SIGGAH=1e-15 SIGGDE=1e-15 SIGGDH=1e-15   \
+				continuous numa=1000 numd=1000	tfile=defectp
+		IF.END
+		IF COND=($i_aSi_thick_E>0)
+			DEFECTS number=1 X.MIN=0 X.MAX=$cellwidth Y.MIN=$coordP1i Y.MAX=$coordP2i \
+				NTA=$NTAip NTD=$NTDip WTA=$WTAip WTD=$WTDip \
+				NGA=$NGAip NGD=$NGDip EGA=$EGAip EGD=$EGDip WGA=$WGAip WGD=$WGDip \
+				SIGTAE=1e-15 SIGTAH=1e-17 SIGTDE=1e-17 SIGTDH=1e-15 \
+				SIGGAE=1e-15 SIGGAH=1e-15 SIGGDE=1e-15 SIGGDH=1e-15   \
+				continuous numa=1000 numd=1000 tfile=defecti
+		IF.END
+	IF.END
+
+	## base:
+	#  a-Si:H(n) ; Ef-Ec=0.199914eV ; Nd=1.56e+18
+	IF COND=($isBSFHET=1)
+		IF COND=($aSi_thick_BSF>0)
+			DEFECTS number=1 X.MIN=0 X.MAX=$cellwidth Y.MIN=$coordN1 Y.MAX=$coordN2 \
+				NTA=$NTAn NTD=$NTDn WTA=$WTAn WTD=$WTDn \
+				NGA=$NGAn NGD=$NGDn EGA=$EGAn EGD=$EGDn WGA=$WGAn WGD=$WGDn \
+				SIGTAE=1e-15 SIGTAH=1e-17 SIGTDE=1e-17 SIGTDH=1e-15 \
+				SIGGAE=1e-15 SIGGAH=1e-15 SIGGDE=1e-15 SIGGDH=1e-15   \
+				continuous numa=1000 numd=1000 tfile=defectn
+		IF.END
+		IF COND=($i_aSi_thick_BSF>0)
+			DEFECTS number=1 X.MIN=0 X.MAX=$cellwidth Y.MIN=$coordN1i Y.MAX=$coordN2i \
+				NTA=$NTAin NTD=$NTDin WTA=$WTAin WTD=$WTDin \
+				NGA=$NGAin NGD=$NGDin EGA=$EGAin EGD=$EGDin WGA=$WGAin WGD=$WGDin \
+				SIGTAE=1e-15 SIGTAH=1e-17 SIGTDE=1e-17 SIGTDH=1e-15 \
+				SIGGAE=1e-15 SIGGAH=1e-15 SIGGDE=1e-15 SIGGDH=1e-15   \
+				continuous numa=1000 numd=1000 tfile=defectirear
+		IF.END
+	IF.END
+IF.END
+
+# c-Si(n)
+# defective layer front
+IF COND=($DefectiveLayerThicknessFront>0)
+	IF COND=($isInterfaceDefect=1)
+		set Ndef = $Ndefsurf/sqrt($pi)/$wdef
+		INTDEFECTS number=2 X.MIN=0 X.MAX=$cellwidth Y.MIN=$y2 Y.MAX=$y2 NTA=0 NTD=0 NGA=$Ndef NGD=$Ndef EGA=1.12/2-0.18 EGD=1.12/2 WGA=$wdef WGD=$wdef \
+			SIGGAE=$SigmaDef SIGGAH=$SigmaDef*10 SIGGDE=$SigmaDef*10 SIGGDH=$SigmaDef \
+			continuous numa=1000 numd=1000 tfile=defectlfront2D
+	ELSE
+		set Ndef = $Ndefsurf/sqrt($pi)/($DefectiveLayerThicknessFront*1e-4)/$wdef
+		DEFECTS number=2 X.MIN=0 X.MAX=$cellwidth Y.MIN=$y2 Y.MAX=$y2d NTA=0 NTD=0 NGA=$Ndef NGD=$Ndef EGA=1.12/2-0.18 EGD=1.12/2 WGA=$wdef WGD=$wdef \
+			SIGGAE=$SigmaDef SIGGAH=$SigmaDef*10 SIGGDE=$SigmaDef*10 SIGGDH=$SigmaDef \
+			continuous numa=1000 numd=1000 tfile=defectlfron
+	IF.END
+IF.END
+# defective layer rear
+IF COND=($DefectiveLayerThickness>0)
+	IF COND=($isInterfaceDefect=1)
+		set Ndef = $Ndefsurf/sqrt($pi)/$wdef
+		INTDEFECTS number=2 X.MIN=0 X.MAX=$cellwidth Y.MIN=$y3 Y.MAX=$y3 NTA=0 NTD=0 NGA=$Ndef NGD=$Ndef EGA=1.12/2-0.18 EGD=1.12/2 WGA=$wdef WGD=$wdef \
+			SIGGAE=$SigmaDef SIGGAH=$SigmaDef*10 SIGGDE=$SigmaDef*10 SIGGDH=$SigmaDef \
+			continuous numa=1000 numd=1000 tfile=defectlrear
+	ELSE
+		set Ndef = $Ndefsurf/sqrt($pi)/($DefectiveLayerThickness*1e-4)/$wdef
+		DEFECTS number=2 X.MIN=0 X.MAX=$cellwidth Y.MIN=$y3d Y.MAX=$y3 NTA=0 NTD=0 NGA=$Ndef NGD=$Ndef EGA=1.12/2-0.18 EGD=1.12/2 WGA=$wdef WGD=$wdef \
+			SIGGAE=$SigmaDef SIGGAH=$SigmaDef*10 SIGGDE=$SigmaDef*10 SIGGDH=$SigmaDef \
+			continuous numa=1000 numd=1000 tfile=defectlrear
+	IF.END
+IF.END
+
+
+
+models material=Si srh auger masetti BGN FERMIDIRAC
+#models material=Si srh auger masetti FERMIDIRAC
+#models UST print temperature=300
+#models MOS print temperature=300
+IF COND=($y1SiO2^=0 & $y5SiO2^=$y5)
+	models print conmob fldmob consrh qtnlsc.ho qtnlsc.el qtnl.derivs
+IF.END
+models print
+
+
+## -------------------------  BEAM DEFINITION  -------------------------  
+beam num=1 x.origin=$cellwidth*0.5 y.origin=-1 AM1.5 wavel.start=0.3 wavel.end=1.2 wavel.num=161 TR.MATRIX angle=90
+
+
+METHOD NEWTON
+
+## Skip if exist
+#IF COND=($IsReplace = 0)
+#	set FileExist = 0;
+#	SYSTEM if test -f "IV_$'OutputString'.log" then FileExist = 1; fi
+#	IF COND=($FileExist = 1)
+#		quit
+#	IF.END
+#IF.END
+
+## -------------------------  CALCULATIONS  -------------------------  
+solve init
+
+IF COND=($IsStructureShow = 1)
+	output val.band con.band band.param u.srh u.auger charge
+	save outf=$'OutputString'_dark.str
+	#quit
+
+	#  Voc conditions
+	solve b1=1 i1=0
+	output band.temp opt.int val.band con.band band.param u.srh u.auger e.mob h.mob charge
+	save outf=$'OutputString'_light0A.str
+	#  Jsc conditions
+	solve vemitter=0	
+	output band.temp opt.int val.band con.band band.param u.srh u.auger e.mob h.mob charge
+	save outf=$'OutputString'_light0V.str
+IF.END
+
+
+
+#quit
+log outf=IV_$'OutputString'.log
+solve b1=1	vemitter=0	vstep=0.05	vfinal=0.3  name=emitter 
+solve					vstep=0.01	vfinal=0.45 name=emitter
+solve					vstep=0.005	vfinal=0.77 name=emitter
+
+## fill factor and energy conversion efficiency
+#extract name="V_maxpower" x.val from deriv(v."emitter", abs(v."emitter"*i."base")) where y.val=0.0
+#extract name="I_maxpower" y.val from curve (v."emitter",i."base") where x.val=$V_maxpower
+#extract name="Voc" x.val from curve (v."emitter",i."base") where y.val=0
+#extract name="Isc" y.val from curve (v."emitter",i."base") where x.val=0
+#extract name="Jsc,mA/qcm" ($Isc/($cellwidth*1e-8))*1000
+#extract name="conversion efficiency,%" ($I_maxpower*$V_maxpower)/(0.1*($cellwidth*1e-8))*100
+#extract name="Fill_Factor,%" ($I_maxpower*$V_maxpower)/($Voc*$Isc)*100
+
+#system cp results.final $'OutputString'.res
+
+#solve vemitter=$Voc name=emitter
+#output band.temp opt.int val.band con.band band.param u.srh u.auger e.mob h.mob
+#save outf=$'OutputString'_light$'Voc'V.str
+
+quit
+
+
